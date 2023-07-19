@@ -1,20 +1,53 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
 
-export default function App() {
+import React, { useState, FC, useEffect } from 'react';
+import {
+
+  NavigationContainer,
+} from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import ProductList from './src/screens/ProductList';
+import Cart from './src/screens/Cart';
+import { Provider } from 'react-redux';
+
+import { setupStore } from './src/store';
+import { persistStore } from 'redux-persist';
+import { PersistGate } from 'redux-persist/integration/react';
+
+
+const Stack = createStackNavigator();
+
+
+const App: FC = () => {
+
+  const queryClient = new QueryClient();
+  const store = setupStore();
+  const persistor = persistStore(store);
+
+
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <NavigationContainer >
+          <QueryClientProvider client={queryClient}>
+            <Stack.Navigator initialRouteName={'ProductList'}>
+              <Stack.Screen
+                name="ProductList" component={ProductList}
+                options={{ headerShown: true }}
+              />
+              <Stack.Screen name="Cart" component={Cart}
+                options={{ headerShown: true }}
+              />
+            </Stack.Navigator>
+          </QueryClientProvider>
+        </NavigationContainer>
+      </PersistGate>
+    </Provider>
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+  );
+};
+
+export default App;
+
+
