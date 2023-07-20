@@ -3,9 +3,8 @@ import { setupStore } from '..';
 import { act } from '@testing-library/react-native';
 import { ProductListActions } from './ProductListAction';
 const store = setupStore();
-describe('Summary Actions', () => {
+describe('ProductList Actions', () => {
   const MockResponse = {
-
     response: [
       {
         id: 1,
@@ -43,28 +42,28 @@ describe('Summary Actions', () => {
   }; 
   
 
-  it('should dispatch setSummaryFailed action', async () => {
-    const errorMessage = 'Fetch Summary failed';
+  it('should dispatch setProductListFailed action', async () => {
+    const errorMessage = 'Fetch ProductList failed';
     act(() => {
        store.dispatch(ProductListActions.setProductListFailed(errorMessage));
     });
-    expect(store.getState().summaryReducer.error).toEqual(errorMessage);
-    expect(store.getState().summaryReducer.response).toBe(null);
+    expect(store.getState().ProductListReducer.error).toEqual(errorMessage);
+    expect(store.getState().ProductListReducer.response).toBe(null);
 
   });
-  it('should dispatch setSummarySuccess action', async () => {
+  it('should dispatch setProductListSuccess action', async () => {
     act(() => {
-       store.dispatch(ProductListActions.setProductListSuccess(MockResponse));
+       store.dispatch(ProductListActions.setProductListSuccess(MockResponse.response));
     });
-    expect(store.getState().summaryReducer.response).toEqual(MockResponse);
-    expect(store.getState().summaryReducer.error).toEqual("");
+    expect(store.getState().ProductListReducer.response).toEqual(MockResponse.response);
+    expect(store.getState().ProductListReducer.error).toEqual("");
 
   });
   it('should dispatch setLoading action', async () => {
     act(() => {
        store.dispatch(ProductListActions.setLoading(true));
     });
-    expect(store.getState().summaryReducer.isLoading).toEqual(true);
+    expect(store.getState().ProductListReducer.isLoading).toEqual(true);
   
   });
 

@@ -2,14 +2,13 @@ import React from 'react';
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, SafeAreaView, Alert } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../store';
-import { resetCart } from '../store/ProductList/CartSlice';
-import { useNavigation } from '@react-navigation/native';
+import { resetCart, updateQuantity, removeFromCart } from '../store/ProductList/CartSlice';
 
+import { useNavigation } from '@react-navigation/native';
 
 const Cart: React.FC = () => {
   const dispatch = useDispatch();
-
-  const navigation = useNavigation()
+  const navigation = useNavigation();
   const cartItems = useSelector((state: RootState) => state.CartReducer.cartItems);
 
   const calculateTotal = () => {
@@ -20,13 +19,40 @@ const Cart: React.FC = () => {
     return total;
   };
 
+  const handleUpdateQuantity = (itemId: number, newQuantity: number) => {
+    if (newQuantity >= 1) {
+      dispatch(updateQuantity({ id: itemId, quantity: newQuantity }));
+    } else {
+      // Remove the item from the cart if the quantity is 0
+      handleRemoveItem(itemId);
+    }
+  };
+
+  const handleRemoveItem = (itemId: number) => {
+    dispatch(removeFromCart(itemId));
+  };
+
   const renderItem = ({ item }: { item: any }) => (
     <View style={styles.cartItemContainer}>
       <Image source={{ uri: item.image }} style={styles.cartItemImage} />
       <View style={styles.cartItemDetails}>
         <Text style={styles.cartItemName}>{item.name}</Text>
         <Text style={styles.cartItemPrice}>Price: ${item.price}</Text>
-        <Text style={styles.cartItemQuantity}>Quantity: {item.quantity}</Text>
+        <View style={styles.cartItemActions}>
+          <TouchableOpacity
+            style={styles.cartItemActionButton}
+            onPress={() => handleUpdateQuantity(item.id, item.quantity - 1)}
+          >
+            <Text style={styles.cartItemActionButtonText}>-</Text>
+          </TouchableOpacity>
+          <Text style={styles.cartItemQuantity}>{item.quantity}</Text>
+          <TouchableOpacity
+            style={styles.cartItemActionButton}
+            onPress={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+          >
+            <Text style={styles.cartItemActionButtonText}>+</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -37,15 +63,14 @@ const Cart: React.FC = () => {
       {
         text: 'OK', onPress: () => {
           dispatch(resetCart());
-
-          navigation.navigate('ProductList')
+          navigation.navigate('ProductList');
         }
       }
     ]);
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} testID='cart'>
       <FlatList
         data={cartItems}
         renderItem={renderItem}
@@ -65,6 +90,9 @@ const Cart: React.FC = () => {
     </SafeAreaView>
   );
 };
+
+
+
 
 const styles = StyleSheet.create({
   container: {
@@ -97,7 +125,22 @@ const styles = StyleSheet.create({
   },
   cartItemQuantity: {
     fontSize: 16,
-    marginTop: 5,
+    marginRight: 5,
+    padding:5
+  },
+  cartItemActions: {
+    flexDirection: 'row',
+    marginTop: 10,
+  },
+  cartItemActionButton: {
+    backgroundColor: '#dddddd',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 5,
+    marginRight: 10,
+  },
+  cartItemActionButtonText: {
+    fontSize: 16,
   },
   totalContainer: {
     borderTopWidth: 1,
@@ -113,7 +156,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-
   },
   checkoutButton: {
     backgroundColor: 'blue',

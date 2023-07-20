@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
 import useProductListApi from '../services/hooks/useProductListApi';
 
 interface Props {
-  navigation: StackNavigationProp<any>;
+  navigation?: StackNavigationProp<any>;
 }
 
 interface Product {
@@ -50,30 +50,40 @@ const ProductList: React.FC<Props> = ({ navigation }) => {
     const cartItem = cartItems.find((cartItem) => cartItem.id === item.id);
 
     return (
-      <View style={styles.productContainer}>
-        <Image source={{ uri: item.img }} style={styles.productImage} />
-        <Text style={styles.productName} numberOfLines={2}>
+      <View style={styles.productContainer} testID={`product-${item.id}`}>
+        <Image source={{ uri: item.img }} style={styles.productImage} testID={`product-image-${item.id}`} />
+        <Text style={styles.productName} numberOfLines={2} testID={`product-name-${item.id}`}>
           {item.name}
         </Text>
-        <Text style={styles.productPrice}>Price: ${item.price}</Text>
+        <Text style={styles.productPrice} testID={`product-price-${item.id}`}>
+          Price: ${item.price}
+        </Text>
         {cartItem ? (
           <View style={styles.cartControls}>
             <TouchableOpacity
               style={styles.removeButton}
               onPress={() => handleRemoveFromCart(item.id)}
+              testID={`remove-button-${item.id}`}
             >
               <Text style={styles.cartButtonText}>-</Text>
             </TouchableOpacity>
-            <Text style={styles.cartQuantity}>{cartItem.quantity}</Text>
+            <Text style={styles.cartQuantity} testID={`cart-quantity-${item.id}`}>
+              {cartItem.quantity}
+            </Text>
             <TouchableOpacity
               style={styles.addButton}
               onPress={() => handleUpdateQuantity(item.id, cartItem.quantity + 1)}
+              testID={`add-button-${item.id}`}
             >
               <Text style={styles.cartButtonText}>+</Text>
             </TouchableOpacity>
           </View>
         ) : (
-          <TouchableOpacity style={styles.addButton} onPress={() => handleAddToCart(item)}>
+          <TouchableOpacity
+            style={styles.addButton}
+            onPress={() => handleAddToCart(item)}
+            testID={`add-to-cart-button-${item.id}`}
+          >
             <Text style={styles.cartButtonText}>Add to Cart</Text>
           </TouchableOpacity>
         )}
@@ -103,7 +113,7 @@ const ProductList: React.FC<Props> = ({ navigation }) => {
 
 
   return (
-    <View style={styles.container}>
+    <View style={styles.container} testID='productList'>
       <FlatList
         data={products}
         renderItem={renderItem}
