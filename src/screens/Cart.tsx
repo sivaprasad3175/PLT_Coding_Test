@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, SafeAreaView, Alert } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../store';
-import { resetCart, updateQuantity, removeFromCart } from '../store/ProductList/CartSlice';
+import { resetCart, updateQuantity, removeFromCart ,removeProductFromCart} from '../store/ProductList/CartSlice';
 
 import { useNavigation } from '@react-navigation/native';
 
@@ -29,7 +29,7 @@ const Cart: React.FC = () => {
   };
 
   const handleRemoveItem = (itemId: number) => {
-    dispatch(removeFromCart(itemId));
+    dispatch(removeProductFromCart(itemId));
   };
 
   const renderItem = ({ item }: { item: any }) => (
@@ -51,6 +51,12 @@ const Cart: React.FC = () => {
             onPress={() => handleUpdateQuantity(item.id, item.quantity + 1)}
           >
             <Text style={styles.cartItemActionButtonText}>+</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.cartItemActionButton}
+            onPress={() => handleRemoveItem(item.id)}
+          >
+            <Text style={styles.cartItemActionButtonText}>Remove</Text>
           </TouchableOpacity>
         </View>
       </View>
