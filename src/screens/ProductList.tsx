@@ -94,14 +94,16 @@ const ProductList: React.FC<Props> = ({ navigation }) => {
 
   useEffect(() => {
     const totalQuantity = cartItems.reduce((total, item) => total + item.quantity, 0);
-    navigation.setOptions({
+    navigation?.setOptions({
       headerRight: () => (
         <View style={styles.headerRightContainer}>
           <TouchableOpacity onPress={() => navigation.navigate('Cart')}>
-            <CartIcon width={24} height={24} color="black" />
+            <CartIcon width={24} height={24} color="black" testID="cart-icon" />
             {totalQuantity > 0 && (
               <View style={styles.cartCountBadge}>
-                <Text style={styles.cartCountText}>{totalQuantity}</Text>
+                <Text style={styles.cartCountText} testID="cart-count-badge">
+                  {totalQuantity}
+                </Text>
               </View>
             )}
           </TouchableOpacity>
@@ -109,6 +111,7 @@ const ProductList: React.FC<Props> = ({ navigation }) => {
       ),
     });
   }, [navigation, cartItems]);
+
 
 
 
